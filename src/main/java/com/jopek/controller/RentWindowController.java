@@ -15,6 +15,7 @@ import javafx.stage.Stage;
 
 import java.io.BufferedWriter;
 import java.io.IOException;
+import java.net.URISyntaxException;
 import java.net.URL;
 import java.nio.file.Files;
 import java.nio.file.Paths;
@@ -64,8 +65,8 @@ public class RentWindowController implements Initializable {
         registry.setDate(date.getText());
         registry.setrDate(returnDate.getText());
 
-        try(BufferedWriter writer = Files.newBufferedWriter(Paths.get("./src/main/resources/database/cars.csv"))) {
-            Files.write(Paths.get("./src/main/resources/database/history.csv"), registry.toString().getBytes(), StandardOpenOption.APPEND);
+        try(BufferedWriter writer = Files.newBufferedWriter(Paths.get(getClass().getResource("/database/cars.csv").toURI()))) {
+            Files.write(Paths.get(getClass().getResource("/database/history.csv").toURI()), registry.toString().getBytes(), StandardOpenOption.APPEND);
 
             for(Car tmpCar : carsTable.getItems()) {
                 if(tmpCar.getId().equals(carsTable.getSelectionModel().getSelectedItem().getId()))
@@ -76,7 +77,7 @@ public class RentWindowController implements Initializable {
                 writer.newLine();
             }
 
-        } catch (IOException e) {
+        } catch (IOException | URISyntaxException e) {
             e.printStackTrace();
         }
 
@@ -90,7 +91,7 @@ public class RentWindowController implements Initializable {
 
     private TableView<Client> loadClients() {
 
-        try(Stream<String> stream = Files.lines(Paths.get("./src/main/resources/database/clients.csv"))) {
+        try(Stream<String> stream = Files.lines(Paths.get(getClass().getResource("/database/clients.csv").toURI()))) {
             List<Client> cList = stream.map(line -> {
                 String details[] = line.split(",");
                 Client client = new Client();
@@ -143,7 +144,7 @@ public class RentWindowController implements Initializable {
 
             return tableView;
 
-        }catch(IOException ioex) {
+        }catch(IOException | URISyntaxException ioex) {
             ioex.printStackTrace();
         }
 
@@ -152,7 +153,7 @@ public class RentWindowController implements Initializable {
 
     private TableView<Car> loadCars() {
 
-        try(Stream<String> stream = Files.lines(Paths.get("./src/main/resources/database/cars.csv"))) {
+        try(Stream<String> stream = Files.lines(Paths.get(getClass().getResource("/database/cars.csv").toURI()))) {
             List<Car> cList = stream/*.filter(s -> {
                 String splited[] = s.split(",");
 
@@ -207,7 +208,7 @@ public class RentWindowController implements Initializable {
 
             return tableView;
 
-        }catch(IOException ioex) {
+        }catch(IOException | URISyntaxException ioex) {
             ioex.printStackTrace();
         }
 

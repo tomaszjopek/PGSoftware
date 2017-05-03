@@ -17,6 +17,7 @@ import javafx.stage.Modality;
 import javafx.stage.Stage;
 
 import java.io.IOException;
+import java.net.URISyntaxException;
 import java.net.URL;
 import java.nio.file.Files;
 import java.nio.file.Paths;
@@ -151,8 +152,8 @@ public class Controller implements Initializable {
                     tableView.getItems().add(car);
 
                 try {
-                    Files.write(Paths.get("./src/main/resources/database/cars.csv"), car.toString().getBytes(), StandardOpenOption.APPEND);
-                } catch (IOException e) {
+                    Files.write(Paths.get(getClass().getResource("/database/cars.csv").toURI()), car.toString().getBytes(), StandardOpenOption.APPEND);
+                } catch (IOException | URISyntaxException e) {
                     e.printStackTrace();
                 }
 
@@ -229,8 +230,8 @@ public class Controller implements Initializable {
                     tableView.getItems().add(client);
 
                 try {
-                    Files.write(Paths.get("./src/main/resources/database/clients.csv"), client.toString().getBytes(), StandardOpenOption.APPEND);
-                } catch (IOException e) {
+                    Files.write(Paths.get(getClass().getResource("/database/clients.csv").toURI()), client.toString().getBytes(), StandardOpenOption.APPEND);
+                } catch (IOException | URISyntaxException e) {
                     e.printStackTrace();
                 }
 
@@ -248,7 +249,7 @@ public class Controller implements Initializable {
         isCarTableVisible = false;
         isRegistryTableVisible = false;
 
-        try(Stream<String> stream = Files.lines(Paths.get("./src/main/resources/database/clients.csv"))) {
+        try(Stream<String> stream = Files.lines(Paths.get(getClass().getResource("/database/clients.csv").toURI()))) {
             List<Client> cList = stream.map(line -> {
                 String details[] = line.split(",");
                 Client client = new Client();
@@ -304,7 +305,7 @@ public class Controller implements Initializable {
             AnchorPane.setRightAnchor(tableView, 0.0);
 
 
-        }catch(IOException ioex) {
+        }catch(IOException | URISyntaxException ioex) {
             ioex.printStackTrace();
         }
     }
@@ -314,7 +315,7 @@ public class Controller implements Initializable {
         isCarTableVisible = true;
         isRegistryTableVisible = false;
 
-        try(Stream<String> stream = Files.lines(Paths.get("./src/main/resources/database/cars.csv"))) {
+        try(Stream<String> stream = Files.lines(Paths.get(getClass().getResource("/database/cars.csv").toURI()))) {
             List<Car> cList = stream.map(line -> {
                 String details[] = line.split(",");
 
@@ -366,7 +367,7 @@ public class Controller implements Initializable {
             AnchorPane.setLeftAnchor(tableView, 0.0);
             AnchorPane.setRightAnchor(tableView, 0.0);
 
-        }catch(IOException ioex) {
+        }catch(IOException | URISyntaxException ioex) {
             ioex.printStackTrace();
         }
     }
@@ -376,7 +377,7 @@ public class Controller implements Initializable {
         isCarTableVisible = false;
         isRegistryTableVisible = true;
 
-        try(Stream<String> stream = Files.lines(Paths.get("./src/main/resources/database/history.csv"))) {
+        try(Stream<String> stream = Files.lines(Paths.get(getClass().getResource("/database/history.csv").toURI()))) {
             List<Registry> rList = stream.map(line -> {
                 String details[] = line.split(",");
 
@@ -424,7 +425,7 @@ public class Controller implements Initializable {
             AnchorPane.setLeftAnchor(tableView, 0.0);
             AnchorPane.setRightAnchor(tableView, 0.0);
 
-        }catch(IOException ioex) {
+        }catch(IOException | URISyntaxException ioex) {
             ioex.printStackTrace();
         }
     }
