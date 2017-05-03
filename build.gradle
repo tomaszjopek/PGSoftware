@@ -1,6 +1,7 @@
 group 'PGSoft'
 version '1.0-SNAPSHOT'
 
+
 buildscript {
     dependencies {
         classpath group: 'de.dynamicfiles.projects.gradle.plugins', name: 'javafx-gradle-plugin', version: '8.8.2'
@@ -15,6 +16,7 @@ buildscript {
 
 apply plugin: 'java'
 apply plugin: 'application'
+mainClassName = 'com.jopek.view.Main'
 
 repositories {
     mavenLocal()
