@@ -8,9 +8,9 @@ import javafx.collections.ObservableList;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
 import javafx.scene.control.Alert;
+import javafx.scene.control.DatePicker;
 import javafx.scene.control.TableColumn;
 import javafx.scene.control.TableView;
-import javafx.scene.control.TextField;
 import javafx.scene.layout.AnchorPane;
 import javafx.stage.Stage;
 
@@ -21,6 +21,7 @@ import java.net.URL;
 import java.nio.file.Files;
 import java.nio.file.Paths;
 import java.nio.file.StandardOpenOption;
+import java.time.LocalDate;
 import java.util.List;
 import java.util.ResourceBundle;
 import java.util.stream.Collectors;
@@ -36,9 +37,9 @@ public class RentWindowController implements Initializable {
     @FXML
     private TableView<Car> carsTable;
     @FXML
-    private TextField date;
+    private DatePicker rentDate;
     @FXML
-    private TextField returnDate;
+    private DatePicker returnDate;
     @FXML
     private AnchorPane anchorClient;
     @FXML
@@ -75,8 +76,11 @@ public class RentWindowController implements Initializable {
         else {
             registry.setCarId(carsTable.getSelectionModel().getSelectedItem().getId());
             carsTable.getSelectionModel().getSelectedItem().setFlag("TAK");
-            registry.setDate(date.getText());
-            registry.setrDate(returnDate.getText());
+            LocalDate tmpRentDate = rentDate.getValue();
+            LocalDate tmpReturnDate = returnDate.getValue();
+
+            registry.setDate(tmpRentDate.toString());
+            registry.setrDate(tmpReturnDate.toString());
 
             try(BufferedWriter writer = Files.newBufferedWriter(Paths.get(getClass().getResource("/database/cars.csv").toURI()))) {
                 Files.write(Paths.get(getClass().getResource("/database/history.csv").toURI()), registry.toString().getBytes(), StandardOpenOption.APPEND);
@@ -96,7 +100,6 @@ public class RentWindowController implements Initializable {
 
             stage.close();
         }
-
     }
 
     @FXML

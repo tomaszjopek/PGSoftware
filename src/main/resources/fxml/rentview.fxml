@@ -1,14 +1,14 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
 <?import javafx.scene.control.Button?>
+<?import javafx.scene.control.DatePicker?>
 <?import javafx.scene.control.Label?>
 <?import javafx.scene.control.SplitPane?>
 <?import javafx.scene.control.TableColumn?>
 <?import javafx.scene.control.TableView?>
-<?import javafx.scene.control.TextField?>
 <?import javafx.scene.layout.AnchorPane?>
 
-<AnchorPane prefHeight="400.0" prefWidth="600.0" xmlns="http://javafx.com/javafx/8.0.112" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.jopek.controller.RentWindowController">
+<AnchorPane prefHeight="400.0" prefWidth="600.0" xmlns="http://javafx.com/javafx/8.0.111" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.jopek.controller.RentWindowController">
     <children>
         <SplitPane dividerPositions="0.5" orientation="VERTICAL" prefHeight="400.0" prefWidth="600.0" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
             <items>
@@ -44,10 +44,10 @@
                     <children>
                         <Button layoutX="435.0" layoutY="123.0" mnemonicParsing="false" onAction="#handleClose" text="Anuluj" />
                         <Button layoutX="510.0" layoutY="123.0" mnemonicParsing="false" onAction="#handleOk" text="Dodaj" />
-                        <TextField fx:id="returnDate" layoutX="286.0" layoutY="64.0" />
-                        <TextField fx:id="date" layoutX="286.0" layoutY="14.0" />
                         <Label layoutX="155.0" layoutY="18.0" prefHeight="17.0" prefWidth="111.0" text="Data wypozyczenia:" />
                         <Label layoutX="155.0" layoutY="68.0" prefHeight="17.0" prefWidth="89.0" text="Data zwrotu:" />
+                  <DatePicker fx:id="rentDate" layoutX="303.0" layoutY="14.0" />
+                  <DatePicker fx:id="returnDate" layoutX="303.0" layoutY="64.0" />
                     </children>
                 </AnchorPane>
             </items>
