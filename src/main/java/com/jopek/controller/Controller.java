@@ -1,5 +1,6 @@
 package com.jopek.controller;
 
+import com.jopek.Validator;
 import com.jopek.model.Car;
 import com.jopek.model.Client;
 import com.jopek.model.Registry;
@@ -16,9 +17,10 @@ import javafx.scene.layout.GridPane;
 import javafx.stage.Modality;
 import javafx.stage.Stage;
 
-import java.io.IOException;
+import java.io.*;
 import java.net.URISyntaxException;
 import java.net.URL;
+import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.nio.file.Paths;
 import java.nio.file.StandardOpenOption;
@@ -87,6 +89,7 @@ public class Controller implements Initializable {
 
             RentWindowController controller = loader.getController();
             controller.setStage(dialogStage);
+            controller.setRegistries(registries);
             dialogStage.showAndWait();
 
             if(isRegistryTableVisible)
@@ -99,6 +102,7 @@ public class Controller implements Initializable {
 
     private void showAddVehicleForm() {
         Dialog<Car> dialogForm = new Dialog<>();
+        dialogForm.setHeaderText("Gdy wszystkie dane beda poprawne bedzie mozliwe dodanie nowego pojazdu");
         dialogForm.setTitle("Dodaj pojazd");
         dialogForm.setResizable(true);
 
@@ -133,6 +137,27 @@ public class Controller implements Initializable {
         dialogForm.getDialogPane().getButtonTypes().add(buttonTypeOk);
         dialogForm.getDialogPane().getButtonTypes().add(buttonTypeDecline);
 
+        Button buttonOk = (Button) dialogForm.getDialogPane().lookupButton(buttonTypeOk);
+        buttonOk.setDisable(true);
+
+        tProducer.textProperty()
+                .addListener((observable, oldValue, newValue) -> buttonOk
+                        .setDisable(!validateWholeAddVehicleForm(tProducer.getText(),
+                                tModel.getText(),
+                                tYear.getText())));
+
+        tModel.textProperty()
+                .addListener((observable, oldValue, newValue) -> buttonOk
+                        .setDisable(!validateWholeAddVehicleForm(tProducer.getText(),
+                                tModel.getText(),
+                                tYear.getText())));
+
+        tYear.textProperty()
+                .addListener((observable, oldValue, newValue) -> buttonOk
+                        .setDisable(!validateWholeAddVehicleForm(tProducer.getText(),
+                                tModel.getText(),
+                                tYear.getText())));
+
         dialogForm.setResultConverter(param -> {
             if(param == buttonTypeOk) {
                 Car car = new Car();
@@ -152,7 +177,7 @@ public class Controller implements Initializable {
                     tableView.getItems().add(car);
 
                 try {
-                    Files.write(Paths.get(getClass().getResource("/database/cars.csv").toURI()), car.toString().getBytes(), StandardOpenOption.APPEND);
+                    Files.write(Paths.get(getClass().getResource("/database/cars.csv").toURI()), car.toText().getBytes(), StandardOpenOption.APPEND);
                 } catch (IOException | URISyntaxException e) {
                     e.printStackTrace();
                 }
@@ -168,12 +193,13 @@ public class Controller implements Initializable {
 
     private void showAddUserForm() {
         Dialog<Client> dialogForm = new Dialog<>();
+        dialogForm.setHeaderText("Gdy wszystkie dane beda poprawne, bedzie mozliwe dodanie nowego klienta");
         dialogForm.setTitle("Dodaj klienta");
         dialogForm.setResizable(true);
 
         Label lSurname = new Label("Nazwisko: ");
-        Label lName = new Label("Imię: ");
-        Label lCity = new Label("Miejscowość: ");
+        Label lName = new Label("Imie: ");
+        Label lCity = new Label("Miejscowosc: ");
         Label lPostalCode = new Label("Kod pocztowy: ");
         Label lPhone = new Label("Telefon: ");
         Label lEmail = new Label("Email: ");
@@ -209,6 +235,62 @@ public class Controller implements Initializable {
         ButtonType buttonTypeDecline = new ButtonType("Anuluj", ButtonBar.ButtonData.CANCEL_CLOSE);
         dialogForm.getDialogPane().getButtonTypes().add(buttonTypeOk);
         dialogForm.getDialogPane().getButtonTypes().add(buttonTypeDecline);
+        final Button buttonOk = (Button) dialogForm.getDialogPane().lookupButton(buttonTypeOk);
+        buttonOk.setDisable(true);
+
+        tSurname.textProperty()
+                .addListener((observable, oldValue, newValue) -> buttonOk
+                        .setDisable(!validateWholeAddClientForm(tSurname.getText(),
+                                tName.getText(),
+                                tCity.getText(),
+                                tPostalCode.getText(),
+                                tPhone.getText(),
+                                tEmail.getText())));
+
+        tName.textProperty()
+                .addListener((observable, oldValue, newValue) -> buttonOk
+                        .setDisable(!validateWholeAddClientForm(tSurname.getText(),
+                                tName.getText(),
+                                tCity.getText(),
+                                tPostalCode.getText(),
+                                tPhone.getText(),
+                                tEmail.getText())));
+
+        tCity.textProperty()
+                .addListener((observable, oldValue, newValue) -> buttonOk
+                        .setDisable(!validateWholeAddClientForm(tSurname.getText(),
+                                tName.getText(),
+                                tCity.getText(),
+                                tPostalCode.getText(),
+                                tPhone.getText(),
+                                tEmail.getText())));
+
+        tPostalCode.textProperty()
+                .addListener((observable, oldValue, newValue) -> buttonOk
+                        .setDisable(!validateWholeAddClientForm(tSurname.getText(),
+                                tName.getText(),
+                                tCity.getText(),
+                                tPostalCode.getText(),
+                                tPhone.getText(),
+                                tEmail.getText())));
+
+        tPhone.textProperty()
+                .addListener((observable, oldValue, newValue) -> buttonOk
+                        .setDisable(!validateWholeAddClientForm(tSurname.getText(),
+                                tName.getText(),
+                                tCity.getText(),
+                                tPostalCode.getText(),
+                                tPhone.getText(),
+                                tEmail.getText())));
+
+        tEmail.textProperty()
+                .addListener((observable, oldValue, newValue) -> buttonOk
+                        .setDisable(!validateWholeAddClientForm(tSurname.getText(),
+                                tName.getText(),
+                                tCity.getText(),
+                                tPostalCode.getText(),
+                                tPhone.getText(),
+                                tEmail.getText())));
 
         dialogForm.setResultConverter(param -> {
             if(param == buttonTypeOk) {
@@ -216,7 +298,8 @@ public class Controller implements Initializable {
 
                 String uniqueID = clients.stream().map(Client::getId).max(String::compareTo).get();
                 int id = Integer.valueOf(uniqueID);
-                client.setId(String.valueOf(++id));                              //TODO: validation and unique id
+                client.setId(String.valueOf(++id));
+
                 client.setSurname(tSurname.getText());
                 client.setName(tName.getText());
                 client.setCity(tCity.getText());
@@ -230,18 +313,21 @@ public class Controller implements Initializable {
                     tableView.getItems().add(client);
 
                 try {
-                    Files.write(Paths.get(getClass().getResource("/database/clients.csv").toURI()), client.toString().getBytes(), StandardOpenOption.APPEND);
+                    File file = new File(getClass().getResource("/database/clients.csv").toURI());
+                    FileOutputStream fileOutputStream = new FileOutputStream(file, true);
+                    fileOutputStream.write(client.toString().getBytes());
                 } catch (IOException | URISyntaxException e) {
                     e.printStackTrace();
                 }
 
                 return client;
+
             }
 
             return null;
         });
 
-        dialogForm.show();
+        dialogForm.showAndWait();
     }
 
     private void loadClients() {
@@ -249,7 +335,9 @@ public class Controller implements Initializable {
         isCarTableVisible = false;
         isRegistryTableVisible = false;
 
-        try(Stream<String> stream = Files.lines(Paths.get(getClass().getResource("/database/clients.csv").toURI()))) {
+        try(InputStream resource = getClass().getResourceAsStream("/database/clients.csv")) {
+            Stream<String> stream = new BufferedReader(new InputStreamReader(resource, StandardCharsets.UTF_8)).lines();
+
             List<Client> cList = stream.map(line -> {
                 String details[] = line.split(",");
                 Client client = new Client();
@@ -305,7 +393,7 @@ public class Controller implements Initializable {
             AnchorPane.setRightAnchor(tableView, 0.0);
 
 
-        }catch(IOException | URISyntaxException ioex) {
+        }catch(IOException ioex) {
             ioex.printStackTrace();
         }
     }
@@ -315,7 +403,9 @@ public class Controller implements Initializable {
         isCarTableVisible = true;
         isRegistryTableVisible = false;
 
-        try(Stream<String> stream = Files.lines(Paths.get(getClass().getResource("/database/cars.csv").toURI()))) {
+        try(InputStream resource = getClass().getResourceAsStream("/database/cars.csv")) {
+            Stream<String> stream = new BufferedReader(new InputStreamReader(resource, StandardCharsets.UTF_8)).lines();
+
             List<Car> cList = stream.map(line -> {
                 String details[] = line.split(",");
 
@@ -367,7 +457,7 @@ public class Controller implements Initializable {
             AnchorPane.setLeftAnchor(tableView, 0.0);
             AnchorPane.setRightAnchor(tableView, 0.0);
 
-        }catch(IOException | URISyntaxException ioex) {
+        }catch(IOException ioex) {
             ioex.printStackTrace();
         }
     }
@@ -377,7 +467,9 @@ public class Controller implements Initializable {
         isCarTableVisible = false;
         isRegistryTableVisible = true;
 
-        try(Stream<String> stream = Files.lines(Paths.get(getClass().getResource("/database/history.csv").toURI()))) {
+        try(InputStream resource = getClass().getResourceAsStream("/database/history.csv")) {
+            Stream<String> stream = new BufferedReader(new InputStreamReader(resource, StandardCharsets.UTF_8)).lines();
+
             List<Registry> rList = stream.map(line -> {
                 String details[] = line.split(",");
 
@@ -425,7 +517,7 @@ public class Controller implements Initializable {
             AnchorPane.setLeftAnchor(tableView, 0.0);
             AnchorPane.setRightAnchor(tableView, 0.0);
 
-        }catch(IOException | URISyntaxException ioex) {
+        }catch(IOException ioex) {
             ioex.printStackTrace();
         }
     }
@@ -433,5 +525,38 @@ public class Controller implements Initializable {
     public void setmStage(Stage mStage) {
         this.mStage = mStage;
     }
+
+    private void showWarningWindow(String contentText, Dialog dialog) {
+        Alert alert = new Alert(Alert.AlertType.WARNING);
+        alert.setTitle("Ostrzezenie");
+        alert.setHeaderText("Niepoprawne dane");
+        alert.setContentText(contentText);
+
+        alert.showAndWait();
+    }
+
+    private boolean validateWholeAddClientForm(String tSurname,
+                                               String tName,
+                                               String tCity,
+                                               String tPostalCode,
+                                               String tPhone,
+                                               String tEmail) {
+
+        return Validator.validateLetters(tSurname) &&
+                Validator.validateLetters(tName) &&
+                Validator.validateLetters(tCity) &&
+                Validator.validatePostalCode(tPostalCode) &&
+                Validator.validatePhoneNumber(tPhone) &&
+                Validator.validateEmail(tEmail);
+    }
+
+    private boolean validateWholeAddVehicleForm(String tProducer,
+                                                String tModel,
+                                                String tYear) {
+        return Validator.validateLetters(tProducer) &&
+                Validator.validateLetters(tModel) &&
+                Validator.validateYear(tYear);
+    }
+
 }
 

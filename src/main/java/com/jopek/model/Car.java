@@ -119,4 +119,17 @@ public class Car {
                 getPlates() +
                 "," + getFlag();
     }
+
+    public String toText() {
+        return getId() +
+                "," +
+                getProducer() +
+                "," +
+                getModel() +
+                "," +
+                getProductionYear() +
+                "," +
+                getPlates() +
+                "," + getFlag();
+    }
 }

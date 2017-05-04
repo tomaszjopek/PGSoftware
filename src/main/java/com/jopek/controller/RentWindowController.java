@@ -7,6 +7,7 @@ import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
+import javafx.scene.control.Alert;
 import javafx.scene.control.TableColumn;
 import javafx.scene.control.TableView;
 import javafx.scene.control.TextField;
@@ -44,6 +45,7 @@ public class RentWindowController implements Initializable {
     private AnchorPane anchorCar;
 
     private Stage stage;
+    private List<Registry> registries;
 
     @Override
     public void initialize(URL location, ResourceBundle resources) {
@@ -58,30 +60,43 @@ public class RentWindowController implements Initializable {
     @FXML
     private void handleOk() {
         Registry registry = new Registry();
-        registry.setId("4");
+
+        String uniqueID = registries.stream().map(Registry::getId).max(String::compareTo).get();
+        int id = Integer.valueOf(uniqueID);
+        registry.setId(String.valueOf(++id));
+
         registry.setClientId(clientsTable.getSelectionModel().getSelectedItem().getId());
-        registry.setCarId(carsTable.getSelectionModel().getSelectedItem().getId());
-        carsTable.getSelectionModel().getSelectedItem().setFlag("TAK");
-        registry.setDate(date.getText());
-        registry.setrDate(returnDate.getText());
+        if(carsTable.getSelectionModel().getSelectedItem().getFlag().equals("TAK")) {
+            Alert alert = new Alert(Alert.AlertType.WARNING);
+            alert.setTitle("Ostrzezenie");
+            alert.setContentText("Pojazd jest juz wypozyczony");
+            alert.showAndWait();
+        }
+        else {
+            registry.setCarId(carsTable.getSelectionModel().getSelectedItem().getId());
+            carsTable.getSelectionModel().getSelectedItem().setFlag("TAK");
+            registry.setDate(date.getText());
+            registry.setrDate(returnDate.getText());
 
-        try(BufferedWriter writer = Files.newBufferedWriter(Paths.get(getClass().getResource("/database/cars.csv").toURI()))) {
-            Files.write(Paths.get(getClass().getResource("/database/history.csv").toURI()), registry.toString().getBytes(), StandardOpenOption.APPEND);
+            try(BufferedWriter writer = Files.newBufferedWriter(Paths.get(getClass().getResource("/database/cars.csv").toURI()))) {
+                Files.write(Paths.get(getClass().getResource("/database/history.csv").toURI()), registry.toString().getBytes(), StandardOpenOption.APPEND);
 
-            for(Car tmpCar : carsTable.getItems()) {
-                if(tmpCar.getId().equals(carsTable.getSelectionModel().getSelectedItem().getId()))
-                    tmpCar.setFlag("TAK");
+                for(Car tmpCar : carsTable.getItems()) {
+                    if(tmpCar.getId().equals(carsTable.getSelectionModel().getSelectedItem().getId()))
+                        tmpCar.setFlag("TAK");
 
-                writer.write(tmpCar.getId()+","+tmpCar.getProducer()+","+tmpCar.getModel()+","+tmpCar.getProductionYear()+
-                        ","+tmpCar.getPlates()+","+tmpCar.getFlag());
-                writer.newLine();
+                    writer.write(tmpCar.getId()+","+tmpCar.getProducer()+","+tmpCar.getModel()+","+tmpCar.getProductionYear()+
+                            ","+tmpCar.getPlates()+","+tmpCar.getFlag());
+                    writer.newLine();
+                }
+
+            } catch (IOException | URISyntaxException e) {
+                e.printStackTrace();
             }
 
-        } catch (IOException | URISyntaxException e) {
-            e.printStackTrace();
+            stage.close();
         }
 
-        stage.close();
     }
 
     @FXML
@@ -215,4 +230,7 @@ public class RentWindowController implements Initializable {
         return null;
     }
 
+    public void setRegistries(List<Registry> registries) {
+        this.registries = registries;
+    }
 }
