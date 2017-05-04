@@ -56,7 +56,6 @@ public class Controller implements Initializable {
     private boolean isCarTableVisible;
     private boolean isRegistryTableVisible;
 
-
     public Controller() {
 
     }
